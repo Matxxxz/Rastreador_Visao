@@ -56,9 +56,25 @@ while True:
         maior_contorno = max(contornos, key=cv2.contourArea)
 
         if cv2.contourArea(maior_contorno) > 500:
-            x, y, largura, altura = cv2.boundingRect(maior_contorno)
-            cv2.rectangle(frame, (x, y), (x + largura, y + altura), (0, 255, 0), 3)
-            cv2.putText(frame, "Alvo Detectado", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            #Calcular os momentos do contorno (matemática para achar o centro)
+            M = cv2.moments(maior_contorno)
+
+            #Evita divisão por zero
+            if M["m00"] != 0:
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+
+                #Desenhar o centroide na tela
+                cv2.circle(frame, (cx, cy), 5, (0, 0, 255), -1)
+
+                #Mostrar os dados no terminal (Telemetria)
+                print(f"Objeto detectado em: X={cx}, Y={cy}")
+
+                #Desenhar o retângulo
+                x, y, largura, altura = cv2.boundingRect(maior_contorno)
+                cv2.rectangle(frame, (x, y), (x + largura, y + altura), (0, 255, 0), 3)
+                cv2.putText(frame, f"Alvo: {cx},{cy}", (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
     #Exibe as 3 janelas (Câmera Original, Máscara e o Painel de Calibragem já aberto)
     cv2.imshow('Sistema de Rastreamento de Cor', frame)
