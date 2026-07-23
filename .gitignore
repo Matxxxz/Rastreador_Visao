@@ -1,4 +1,8 @@
-config.py
+vision_python/config.py
 .idea/
 .venv/
+.vscode/
+*.class
 __pycache__/
+build/
+bin/
